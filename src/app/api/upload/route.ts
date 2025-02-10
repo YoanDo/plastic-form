@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
         JSON.stringify({ message: "Fichiers envoyés avec succès" }),
         { status: 200, headers: getCorsHeaders() }
       );
-    } catch (err: any) {
+    } catch (err: Error) {
       console.error("❌ Erreur SFTP :", err);
       return new NextResponse(
         JSON.stringify({ error: "Erreur d'envoi SFTP", details: err.message }),
