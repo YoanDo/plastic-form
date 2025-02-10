@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    runtime: "nodejs",
-  },
   env: {
     SFTP_HOST: process.env.SFTP_HOST,
     SFTP_PORT: process.env.SFTP_PORT,
