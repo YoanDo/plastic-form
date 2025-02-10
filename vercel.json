@@ -1,0 +1,7 @@
+{
+	"functions": {
+	  "api/upload": {
+		"runtime": "nodejs18.x"
+	  }
+	}
+  }
