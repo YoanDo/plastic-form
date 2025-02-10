@@ -12,23 +12,31 @@ const sftpConfig = {
   password: process.env.SFTP_PASS!,
 };
 
+// Fonction pour générer les headers CORS
+function getCorsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+// Gérer les requêtes OPTIONS (pré-requête CORS)
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: getCorsHeaders() });
+}
+
 export async function POST(req: NextRequest) {
   console.log("📡 API /api/upload appelée avec :", req.method);
-
-  const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "*");
-  headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  headers.set("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    return new NextResponse(null, { status: 204, headers });
-  }
 
   try {
     const { firstName, lastName, email, interest } = await req.json();
 
     if (!firstName || !lastName || !email || !interest) {
-      return new NextResponse(JSON.stringify({ error: "Tous les champs sont requis" }), { status: 400, headers });
+      return new NextResponse(
+        JSON.stringify({ error: "Tous les champs sont requis" }),
+        { status: 400, headers: getCorsHeaders() }
+      );
     }
 
     console.log("✅ Données reçues :", { firstName, lastName, email, interest });
@@ -56,16 +64,24 @@ export async function POST(req: NextRequest) {
       await sftp.put(interactionFilePath, `/surfrider-causeaeffet/plastic_origins/interactions/${interactionFileName}`);
 
       console.log("✅ Fichiers envoyés avec succès via SFTP");
-      return new NextResponse(JSON.stringify({ message: "Fichiers envoyés avec succès" }), { status: 200, headers });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return new NextResponse(
+        JSON.stringify({ message: "Fichiers envoyés avec succès" }),
+        { status: 200, headers: getCorsHeaders() }
+      );
     } catch (err: any) {
       console.error("❌ Erreur SFTP :", err);
-      return new NextResponse(JSON.stringify({ error: "Erreur d'envoi SFTP", details: err.message }), { status: 500, headers });
+      return new NextResponse(
+        JSON.stringify({ error: "Erreur d'envoi SFTP", details: err.message }),
+        { status: 500, headers: getCorsHeaders() }
+      );
     } finally {
       await sftp.end();
     }
   } catch (error) {
     console.error("❌ Erreur API :", error);
-    return new NextResponse(JSON.stringify({ error: "Erreur interne" }), { status: 500, headers });
+    return new NextResponse(
+      JSON.stringify({ error: "Erreur interne" }),
+      { status: 500, headers: getCorsHeaders() }
+    );
   }
 }
