@@ -68,10 +68,13 @@ export async function POST(req: NextRequest) {
         JSON.stringify({ message: "Fichiers envoyés avec succès" }),
         { status: 200, headers: getCorsHeaders() }
       );
-    } catch (err: Error) {
+    } catch (err: unknown) {
       console.error("❌ Erreur SFTP :", err);
       return new NextResponse(
-        JSON.stringify({ error: "Erreur d'envoi SFTP", details: err.message }),
+        JSON.stringify({ 
+          error: "Erreur d'envoi SFTP", 
+          details: err instanceof Error ? err.message : 'Erreur inconnue'
+        }),
         { status: 500, headers: getCorsHeaders() }
       );
     } finally {
